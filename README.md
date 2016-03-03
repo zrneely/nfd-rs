@@ -31,5 +31,9 @@ Currently, only single file and save dialogs are supported, and the crate has be
   }
   ```
 
+## Screenshot
+
+![Cocoa on El Capitan](screenshots/cocoa_el_capitan.png?raw=true)
+
 ## To build
 Follow the instructions [here](https://github.com/mlabbe/nativefiledialog/blob/master/README.md) to build the libraries in C and an OS-specific language. Then, set the `NFD_LIB_DIR` environment variable to the path of the directory in which the libraries are stored. Now run `cargo build`.
