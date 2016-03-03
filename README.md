@@ -1,4 +1,4 @@
-# nfd-rs ![https://github.com/saurvs/nfd-rs/blob/master/LICENSE.md](https://img.shields.io/badge/license-MIT-blue.svg)
+# nfd-rs [![](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/saurvs/nfd-rs/blob/master/LICENSE.md)
 
 `nfd-rs` is a Rust binding to the library [nativefiledialog](https://github.com/mlabbe/nativefiledialog), that provides a convenient cross-platform interface to opening file dialogs on Linux, OS X and Windows.
 
