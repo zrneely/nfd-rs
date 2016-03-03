@@ -1,0 +1,9 @@
+[package]
+name = "nfd"
+version = "0.0.1"
+authors = ["Saurav Sachidanand <sauravsachidanand@gmail.com>"]
+
+build = "build.rs"
+
+[dependencies]
+libc = "0.2.7"
