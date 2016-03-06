@@ -2,9 +2,9 @@ extern crate libc;
 
 mod ffi;
 
+use ffi::*;
 use libc::c_char;
 use std::ffi::*;
-use ffi::*;
 
 /// Result of opening a file dialog
 pub enum NFDResult {
@@ -34,44 +34,36 @@ pub fn open_save_dialog(filter_list: &str, default_path: &str) -> NFDResult {
 }
 
 fn open_dialog(filter_list: &str, default_path: &str, dialog_type: &DialogType) -> NFDResult {
-
-    let mut final_cstring = CString::new("").unwrap();
-    let out_path = CString::new("").unwrap().into_raw() as *mut *mut c_char;
     let result: nfdresult_t;
+    let result_cstring;
+
+    let filter_list_cstring = CString::new(filter_list).unwrap();
+    let default_path_cstring = CString::new(default_path).unwrap();
+    let out_path = CString::new("").unwrap().into_raw() as *mut *mut c_char;
 
     unsafe {
         result = match dialog_type {
             &DialogType::SingleFile => {
-                NFD_OpenDialog(
-                CString::new(filter_list).unwrap().as_ptr(),
-                CString::new(default_path).unwrap().as_ptr(),
-                out_path)
+                NFD_OpenDialog(filter_list_cstring.as_ptr(), default_path_cstring.as_ptr(), out_path)
             },
 
             &DialogType::SaveFile => {
-                NFD_SaveDialog(
-                CString::new(filter_list).unwrap().as_ptr(),
-                CString::new(default_path).unwrap().as_ptr(),
-                out_path)
+                NFD_SaveDialog(filter_list_cstring.as_ptr(), default_path_cstring.as_ptr(), out_path)
             },
         };
 
-        match result {
-            nfdresult_t::NFD_OKAY => {
-                final_cstring = CString::from_raw(*out_path);
-            },
-            nfdresult_t::NFD_ERROR => {
-                final_cstring = CStr::from_ptr(NFD_GetError()).to_owned();
-            }
-            _ => {},
+        result_cstring = match result {
+            nfdresult_t::NFD_OKAY => CString::from_raw(*out_path),
+            nfdresult_t::NFD_ERROR => CStr::from_ptr(NFD_GetError()).to_owned(),
+            _ => CString::new("").unwrap()
         }
     }
 
-    let final_string = final_cstring.to_str().unwrap().to_string();
+    let result_string = result_cstring.to_str().unwrap().to_string();
 
     match result {
-        nfdresult_t::NFD_OKAY => NFDResult::Okay(final_string),
+        nfdresult_t::NFD_OKAY => NFDResult::Okay(result_string),
         nfdresult_t::NFD_CANCEL => NFDResult::Cancel,
-        nfdresult_t::NFD_ERROR => NFDResult::Error(final_string)
+        nfdresult_t::NFD_ERROR => NFDResult::Error(result_string)
     }
 }
