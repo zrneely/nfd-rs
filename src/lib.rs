@@ -23,32 +23,48 @@ enum DialogType {
 
 /// Open single file dialog
 #[inline(always)]
-pub fn open_file_dialog(filter_list: &str, default_path: &str) -> NFDResult {
+pub fn open_file_dialog(filter_list: Option<&str>, default_path: Option<&str>) -> NFDResult {
     open_dialog(filter_list, default_path, &DialogType::SingleFile)
 }
 
 /// Open save dialog
 #[inline(always)]
-pub fn open_save_dialog(filter_list: &str, default_path: &str) -> NFDResult {
+pub fn open_save_dialog(filter_list: Option<&str>, default_path: Option<&str>) -> NFDResult {
     open_dialog(filter_list, default_path, &DialogType::SaveFile)
 }
 
-fn open_dialog(filter_list: &str, default_path: &str, dialog_type: &DialogType) -> NFDResult {
+fn open_dialog(filter_list: Option<&str>, default_path: Option<&str>, dialog_type: &DialogType) -> NFDResult {
     let result: nfdresult_t;
     let result_cstring;
 
-    let filter_list_cstring = CString::new(filter_list).unwrap();
-    let default_path_cstring = CString::new(default_path).unwrap();
+    let filter_list_cstring;
+    let filter_list_ptr = match filter_list {
+        Some(fl_str) => {
+            filter_list_cstring = CString::new(fl_str).unwrap();
+            filter_list_cstring.as_ptr()
+        }
+        None => std::ptr::null()
+    };
+
+    let default_path_cstring;
+    let default_path_ptr = match default_path {
+        Some(dp_str) => {
+            default_path_cstring = CString::new(dp_str).unwrap();
+            default_path_cstring.as_ptr()
+        }
+        None => std::ptr::null()
+    };
+
     let out_path = CString::new("").unwrap().into_raw() as *mut *mut c_char;
 
     unsafe {
         result = match dialog_type {
             &DialogType::SingleFile => {
-                NFD_OpenDialog(filter_list_cstring.as_ptr(), default_path_cstring.as_ptr(), out_path)
+                NFD_OpenDialog(filter_list_ptr, default_path_ptr, out_path)
             },
 
             &DialogType::SaveFile => {
-                NFD_SaveDialog(filter_list_cstring.as_ptr(), default_path_cstring.as_ptr(), out_path)
+                NFD_SaveDialog(filter_list_ptr, default_path_ptr, out_path)
             },
         };
 
