@@ -1,5 +1,6 @@
 use libc::c_char;
 
+#[allow(dead_code)]
 #[repr(C)]
 pub enum nfdresult_t {
     NFD_ERROR,
