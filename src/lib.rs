@@ -55,21 +55,22 @@ fn open_dialog(filter_list: Option<&str>, default_path: Option<&str>, dialog_typ
         None => std::ptr::null()
     };
 
-    let out_path = CString::new("").unwrap().into_raw() as *mut *mut c_char;
+    let mut out_path: *mut c_char = std::ptr::null_mut();
+    let ptr_out_path = &mut out_path as *mut *mut c_char;
 
     unsafe {
         result = match dialog_type {
             &DialogType::SingleFile => {
-                NFD_OpenDialog(filter_list_ptr, default_path_ptr, out_path)
+                NFD_OpenDialog(filter_list_ptr, default_path_ptr, ptr_out_path)
             },
 
             &DialogType::SaveFile => {
-                NFD_SaveDialog(filter_list_ptr, default_path_ptr, out_path)
+                NFD_SaveDialog(filter_list_ptr, default_path_ptr, ptr_out_path)
             },
         };
 
         result_cstring = match result {
-            nfdresult_t::NFD_OKAY => CString::from_raw(*out_path),
+            nfdresult_t::NFD_OKAY => CStr::from_ptr(out_path).to_owned(),
             nfdresult_t::NFD_ERROR => CStr::from_ptr(NFD_GetError()).to_owned(),
             _ => CString::new("").unwrap()
         }
