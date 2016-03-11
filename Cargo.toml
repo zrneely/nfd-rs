@@ -3,6 +3,9 @@ name = "nfd"
 version = "0.0.1"
 authors = ["Saurav Sachidanand <sauravsachidanand@gmail.com>"]
 
+license = "MIT"
+repository = "https://www.github.com/saurvs/nfd-rs"
+
 build = "build.rs"
 
 [dependencies]
