@@ -6,6 +6,9 @@ authors = ["Saurav Sachidanand <sauravsachidanand@gmail.com>"]
 license = "MIT"
 repository = "https://www.github.com/saurvs/nfd-rs"
 
+description = "Rust bindings to nativefiledialog"
+keywords = ["file", "dialog", "ui"]
+
 build = "build.rs"
 
 [dependencies]
