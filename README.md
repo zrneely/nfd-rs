@@ -2,11 +2,9 @@
 
 `nfd-rs` is a Rust binding to the library [nativefiledialog](https://github.com/mlabbe/nativefiledialog), that provides a convenient cross-platform interface to opening file dialogs on Linux, OS X and Windows.
 
-Currently, only single file and save dialogs are supported, and the crate has been tested only on OS X. And yes, APIs may break with newer versions.
+This crate has been tested on Mac, Window and Linux (Ubuntu 14.04) and supports single/mutliple and save dialogs, notice APIs may break with newer versions.
 
 ## Usage
-
-* Follow the instructions [here](https://github.com/mlabbe/nativefiledialog/blob/master/README.md) to build the libraries in C and an OS-specific language. Then, set the `NFD_LIB_DIR` environment variable to the path of the directory in which the libraries are stored.
 
 * Add the dependency `nfd` in your ```Cargo.toml```
   ```toml
@@ -18,18 +16,37 @@ Currently, only single file and save dialogs are supported, and the crate has be
   ```rust
   extern crate nfd;
 
-  use nfd::*;
+  use nfd::Response
 
   fn main() {
 
-    let result = open_file_dialog(None, None);
+    let result = nfd::open_file_dialog(None, None).unwrap_or_else(|e| {
+    	panic!(e);
+    });
 
     match result {
-        NFDResult::Okay(file_path) => println!("File path = {:?}", file_path),
-        NFDResult::Cancel => println!("User canceled"),
-        NFDResult::Error(error) => println!("Error: {}", error),
+        Response::Okay(file_path) => println!("File path = {:?}", file_path),
+        Response::Cancel => println!("User canceled"),
     }
+  }
+  ```
 
+* Open a multi file dialog using builder with jpg files as filter
+  ```rust
+  extern crate nfd;
+
+  use nfd::Response
+
+  fn main() {
+
+    let result = nfd::dialog().filter("jpg").open_multiple().unwrap_or_else(|e| {
+    	panic!(e);
+    });
+
+    match result {
+        Response::OkayMultiple(files) => println!("Files {:?}", files),
+        Response::Cancel => println!("User canceled"),
+    }
   }
   ```
 
