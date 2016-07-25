@@ -39,7 +39,7 @@ This crate has been tested on Mac, Window and Linux (Ubuntu 14.04) and supports 
 
   fn main() {
 
-    let result = nfd::dialog().filter("jpg").open_multiple().unwrap_or_else(|e| {
+    let result = nfd::dialog_multiple().filter("jpg").open().unwrap_or_else(|e| {
     	panic!(e);
     });
 
