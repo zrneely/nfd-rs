@@ -71,11 +71,6 @@ impl<'a> DialogBuilder<'a> {
         self
     }
 
-    pub fn dialog_type(&'a mut self, dialog_type: DialogType) -> &mut DialogBuilder {
-        self.dialog_type = dialog_type;
-        self
-    }
-
     pub fn open(&self) -> Result<Response> {
         open_dialog(self.filter, self.default_path, self.dialog_type.clone())
     }
