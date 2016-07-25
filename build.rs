@@ -39,7 +39,13 @@ fn main() {
     	cfg.compile("libnfd.a");
         println!("cargo:rustc-link-lib=ole32");
     } else {
-    	let pkg_output = Command::new("pkg-config").arg("--cflags").arg("gtk+-3.0").output();
+    	let pkg_output = Command::new("pkg-config")
+			.arg("--cflags")
+			.arg("gtk+-3.0")
+			.arg("glib-2.0")
+			.arg("--libs")
+			.arg("glib-2.0")
+			.output();
     	match pkg_output {
     		Ok(output) => {
     			let t = String::from_utf8(output.stdout).unwrap();
