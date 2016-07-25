@@ -39,7 +39,7 @@ pub enum Response {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-enum DialogType {
+pub enum DialogType {
     SingleFile,
     MultipleFiles,
     SaveFile,
@@ -48,9 +48,19 @@ enum DialogType {
 pub struct DialogBuilder<'a> {
     filter: Option<&'a str>,
     default_path: Option<&'a str>,
+    dialog_type: DialogType,
 }
 
 impl<'a> DialogBuilder<'a> {
+
+    pub fn new(dialog_type: DialogType) -> Self {
+        DialogBuilder {
+            filter: None,
+            default_path: None,
+            dialog_type: dialog_type,
+        }
+    }
+
     pub fn filter(&'a mut self, filter: &'a str) -> &mut DialogBuilder {
         self.filter = Some(filter);
         self
@@ -61,24 +71,26 @@ impl<'a> DialogBuilder<'a> {
         self
     }
 
+    pub fn dialog_type(&'a mut self, dialog_type: DialogType) -> &mut DialogBuilder {
+        self.dialog_type = dialog_type;
+        self
+    }
+
     pub fn open(&self) -> Result<Response> {
-        open_file_dialog(self.filter, self.default_path)
-    }
-
-    pub fn open_multiple(&self) -> Result<Response> {
-        open_file_multiple_dialog(self.filter, self.default_path)
-    }
-
-    pub fn save(&self) -> Result<Response> {
-        open_save_dialog(self.filter, self.default_path)
+        open_dialog(self.filter, self.default_path, self.dialog_type.clone())
     }
 }
 
 pub fn dialog<'a>() -> DialogBuilder<'a> {
-    DialogBuilder {
-        filter: None,
-        default_path: None,
-    }
+    DialogBuilder::new(DialogType::SingleFile)
+}
+
+pub fn dialog_multiple<'a>() -> DialogBuilder<'a> {
+    DialogBuilder::new(DialogType::MultipleFiles)
+}
+
+pub fn dialog_save<'a>() -> DialogBuilder<'a> {
+    DialogBuilder::new(DialogType::SaveFile)
 }
 
 pub type Result<T> = std::result::Result<T, NFDError>;
@@ -98,7 +110,7 @@ pub fn open_save_dialog(filter_list: Option<&str>, default_path: Option<&str>) -
     open_dialog(filter_list, default_path, DialogType::SaveFile)
 }
 
-fn open_dialog(filter_list: Option<&str>, default_path: Option<&str>, dialog_type: DialogType) -> Result<Response> {
+pub fn open_dialog(filter_list: Option<&str>, default_path: Option<&str>, dialog_type: DialogType) -> Result<Response> {
     let result;
     let filter_list_cstring;
     let default_path_cstring;
