@@ -43,6 +43,7 @@ pub enum DialogType {
     SingleFile,
     MultipleFiles,
     SaveFile,
+    PickFolder,
 }
 
 pub struct DialogBuilder<'a> {
@@ -105,6 +106,11 @@ pub fn open_save_dialog(filter_list: Option<&str>, default_path: Option<&str>) -
     open_dialog(filter_list, default_path, DialogType::SaveFile)
 }
 
+/// Open save dialog
+pub fn open_pick_folder(default_path: Option<&str>) -> Result<Response> {
+    open_dialog(None, default_path, DialogType::PickFolder)
+}
+
 pub fn open_dialog(filter_list: Option<&str>, default_path: Option<&str>, dialog_type: DialogType) -> Result<Response> {
     let result;
     let filter_list_cstring;
@@ -145,11 +151,16 @@ pub fn open_dialog(filter_list: Option<&str>, default_path: Option<&str>, dialog
             DialogType::SaveFile => {
                 NFD_SaveDialog(filter_list_ptr, default_path_ptr, ptr_out_path)
             },
+
+            DialogType::PickFolder => {
+                NFD_PickFolder(default_path_ptr, ptr_out_path)
+            },
         };
 
         match result {
             nfdresult_t::NFD_OKAY =>{
-                if dialog_type == DialogType::SingleFile {
+                if dialog_type == DialogType::SingleFile || 
+                   dialog_type == DialogType::PickFolder {
                     Ok(Response::Okay(CStr::from_ptr(out_path).to_string_lossy().into_owned()))
                 } else {
                     let count = NFD_PathSet_GetCount(&out_multiple);
