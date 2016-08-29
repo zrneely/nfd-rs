@@ -130,7 +130,7 @@ pub fn open_dialog(filter_list: Option<&str>, default_path: Option<&str>, dialog
     let ptr_out_path = &mut out_path as *mut *mut c_char;
 
     let mut out_multiple = nfdpathset_t::default();
-    let ptr_out_multyple = &mut out_multiple as *mut nfdpathset_t;
+    let ptr_out_multiple = &mut out_multiple as *mut nfdpathset_t;
 
     unsafe {
         result = match dialog_type {
@@ -139,7 +139,7 @@ pub fn open_dialog(filter_list: Option<&str>, default_path: Option<&str>, dialog
             },
 
             DialogType::MultipleFiles => {
-                NFD_OpenDialogMultiple(filter_list_ptr, default_path_ptr, ptr_out_multyple)
+                NFD_OpenDialogMultiple(filter_list_ptr, default_path_ptr, ptr_out_multiple)
             },
 
             DialogType::SaveFile => {
@@ -149,9 +149,7 @@ pub fn open_dialog(filter_list: Option<&str>, default_path: Option<&str>, dialog
 
         match result {
             nfdresult_t::NFD_OKAY =>{
-                if dialog_type == DialogType::SingleFile {
-                    Ok(Response::Okay(CStr::from_ptr(out_path).to_string_lossy().into_owned()))
-                } else {
+                if dialog_type == DialogType::MultipleFiles {
                     let count = NFD_PathSet_GetCount(&out_multiple);
                     let mut res = Vec::with_capacity(count);
                     for i in 0..count {
@@ -160,9 +158,11 @@ pub fn open_dialog(filter_list: Option<&str>, default_path: Option<&str>, dialog
 
                     }
 
-                    NFD_PathSet_Free(ptr_out_multyple);
+                    NFD_PathSet_Free(ptr_out_multiple);
 
                     Ok(Response::OkayMultiple(res))
+                } else {
+                    Ok(Response::Okay(CStr::from_ptr(out_path).to_string_lossy().into_owned()))
                 }
             },
 
