@@ -1,6 +1,6 @@
 [package]
 name = "nfd"
-version = "0.0.3"
+version = "0.0.4"
 authors = [
 	"Saurav Sachidanand <sauravsachidanand@gmail.com>",
 	"Daniel Collin <daniel@collin.com>",
