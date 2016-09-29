@@ -42,6 +42,7 @@ fn main() {
         cfg.compile("libnfd.a");
         println!("cargo:rustc-link-lib=framework=AppKit");
     } else if env.contains("windows") {
+        cfg.cpp(true);
         cfg.file(nfd!("nfd_win.cpp"));
         cfg.compile("libnfd.a");
         println!("cargo:rustc-link-lib=ole32");
