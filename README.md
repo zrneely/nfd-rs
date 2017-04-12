@@ -9,14 +9,14 @@ This crate has been tested on Mac, Window and Linux (Ubuntu 14.04) and supports 
 * Add the dependency `nfd` in your ```Cargo.toml```
   ```toml
   [dependencies]
-  nfd = { git = "https://github.com/saurvs/nfd-rs.git" }
+  nfd = "0.0.4"
   ```
 
 * Open a single file dialog
   ```rust
   extern crate nfd;
 
-  use nfd::Response
+  use nfd::Response;
 
   fn main() {
 
@@ -26,6 +26,7 @@ This crate has been tested on Mac, Window and Linux (Ubuntu 14.04) and supports 
 
     match result {
         Response::Okay(file_path) => println!("File path = {:?}", file_path),
+        Response::OkayMultiple(files) => println!("Files {:?}", files),
         Response::Cancel => println!("User canceled"),
     }
   }
@@ -35,7 +36,7 @@ This crate has been tested on Mac, Window and Linux (Ubuntu 14.04) and supports 
   ```rust
   extern crate nfd;
 
-  use nfd::Response
+  use nfd::Response;
 
   fn main() {
 
@@ -44,6 +45,7 @@ This crate has been tested on Mac, Window and Linux (Ubuntu 14.04) and supports 
     });
 
     match result {
+        Response::Okay(file_path) => println!("File path = {:?}", file_path),
         Response::OkayMultiple(files) => println!("Files {:?}", files),
         Response::Cancel => println!("User canceled"),
     }
