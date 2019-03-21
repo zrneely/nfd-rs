@@ -46,6 +46,7 @@ fn main() {
         cfg.file(nfd!("nfd_win.cpp"));
         cfg.compile("libnfd.a");
         println!("cargo:rustc-link-lib=ole32");
+        println!("cargo:rustc-link-lib=shell32");
         // MinGW doesn't link it by default
         println!("cargo:rustc-link-lib=uuid");
     } else {
